@@ -2,38 +2,35 @@ import React, { useState } from 'react';
 import PostList from './Components/PostList';
 import './App.css';
 
-function SendData(post) {
-  fetch('https://sleepy-buck-eloquent.lemme.cloud/api/1a8d9aec-1873-4a28-b8a5-19df7cc561c2', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'oat_MjE4OQ.SnhXdnFjRjVaTWlPUTdreVNsTTIyQzVDVWRiX05yT1M0elFsRlhEcDI4MTc2OTk3NDI',
-    },
-    body: JSON.stringify({
-      content: post,
-    }),
-  });
-}
-
 function App() {
   const [posts, setPosts] = useState([]);
-  
+
+  // Function to add a new post
   const addPost = (content) => {
-    const newPost = { id: Date.now(), content, likes: 0, comments: [] }; // Initialize comments as empty array
+    const newPost = {
+      id: Date.now(),
+      content,
+      likes: 0,
+      comments: [],
+    };
     setPosts([newPost, ...posts]);
   };
 
-  function poststory(content) {
-    SendData(content);
-    addPost(content);
-  }
+  // Function to handle post submission
+  const handlePostSubmit = () => {
+    const content = document.getElementById('postContent').value;
+    if (content) {
+      addPost(content);
+      document.getElementById('postContent').value = ''; 
+    }
+  };
 
   return (
     <div className="app">
       <h1>Community Stories</h1>
       <div className="post-form">
         <textarea id="postContent" placeholder="What's on your mind?" />
-        <button onClick={() => poststory(document.getElementById('postContent').value)}>
+        <button onClick={handlePostSubmit}>
           Post Story
         </button>
       </div>

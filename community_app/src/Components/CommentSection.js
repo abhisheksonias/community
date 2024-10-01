@@ -2,61 +2,71 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 
-function CommentSection({ comments, setComments, postId, setPosts }) {
+function CommentSection({ comments, setPosts, postId }) {
   const [commentText, setCommentText] = useState('');
 
-  const addComment = () => {
-    if (!commentText) return; // Ensure comment is not empty
-    
-    const newComment = { id: Date.now(), text: commentText, likes: 0 }; // Initialize likes to 0
-    setComments([...comments, newComment]);
-    setCommentText('');
-  
-    // Update the posts in the parent
-    setPosts(prev =>
-      prev.map(p => 
-        p.id === postId ? { ...p, comments: [...p.comments, newComment] } : p
-      )
-    );
+  const handleAddComment = () => {
+    if (commentText.trim() !== '') {
+      setPosts(prevPosts =>
+        prevPosts.map(post =>
+          post.id === postId
+            ? {
+                ...post,
+                comments: [
+                  ...post.comments,
+                  { id: Date.now(), text: commentText, likes: 0, liked: false },
+                ],
+              }
+            : post
+        )
+      );
+      setCommentText('');
+    }
   };
-  
 
-  const likeComment = (commentId) => {
-    const updatedComments = comments.map(comment =>
-      comment.id === commentId
-        ? { ...comment, likes: comment.likes < 1 ? comment.likes + 1 : comment.likes - 1 } // Toggle like
-        : comment
-    );
-    setComments(updatedComments);
-    setPosts(prev =>
-      prev.map(p => p.id === postId ? { ...p, comments: updatedComments } : p)
+  const handleCommentLike = (commentId) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: post.comments.map((comment) =>
+                comment.id === commentId && !comment.liked 
+                  ? { ...comment, likes: comment.likes + 1, liked: true } 
+                  : comment
+              ),
+            }
+          : post
+      )
     );
   };
 
   return (
     <div className="comment-section">
-      <h4>Comments</h4>
-      <div className="comments">
-        {comments.length ? comments.map(comment => (
-          <div key={comment.id} className="comment">
-            <p>{comment.text}</p>
-            <FontAwesomeIcon
-              icon={faHeart}
-              className={`heart-icon ${comment.likes > 0 ? 'liked' : ''}`}
-              onClick={() => likeComment(comment.id)}
-            />{' '}
-            ({comment.likes}) {/* Display like count */}
-          </div>
-        )) : <p>No comments yet.</p>}
-      </div>
-      <div className="add-comment">
+      <div className="comment-form">
         <input
           type="text"
-          placeholder="Write a comment..."
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
+          placeholder="Add a comment..."
         />
-        <button onClick={addComment}>Comment</button>
+        <button onClick={handleAddComment}>Post</button>
+      </div>
+
+      <div className="comments">
+        {comments.map(comment => (
+          <div key={comment.id} className="comment">
+            <p>{comment.text}</p>
+            <div className="comment-actions">
+              <FontAwesomeIcon
+                icon={faHeart}
+                className={`heart-icon2 ${comment.liked ? 'liked' : ''}`} 
+                onClick={() => handleCommentLike(comment.id)} 
+              />{' '}
+              ({comment.likes})
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
