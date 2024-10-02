@@ -1,24 +1,33 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
-import CommentSection from './CommentSection'; 
+import CommentSection from './CommentSection';
 
 function Post({ post, setPosts }) {
-  const [liked, setLiked] = useState(post.likes > 0); 
+  const [liked, setLiked] = useState(post.likes > 0);
 
-  // Handle post like
-  const handleLike = () => {
-    const newLikeCount = liked ? post.likes - 1 : post.likes + 1;
-    setLiked(!liked);
-    setPosts(prev =>
-      prev.map(p => p.id === post.id ? { ...p, likes: newLikeCount } : p)
-    );
+  const handleLike = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/posts/${post._id}/like`, {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        const updatedPost = await response.json();
+        setPosts((prev) =>
+          prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+        );
+        setLiked(!liked);
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
   };
 
   return (
     <div className="post">
       <div className="post-header">
-        <div className="profile-pic"></div> {/* Empty circle as profile picture */}
+        <div className="profile-pic"></div>
         <p><strong>{post.content}</strong></p>
       </div>
       <div className="post-actions">
@@ -30,12 +39,7 @@ function Post({ post, setPosts }) {
         ({post.likes})
       </div>
 
-      {/* Comment section */}
-      <CommentSection
-        comments={post.comments}
-        postId={post.id}
-        setPosts={setPosts}
-      />
+      <CommentSection comments={post.comments} postId={post._id} setPosts={setPosts} />
     </div>
   );
 }
