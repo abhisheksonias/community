@@ -33,7 +33,7 @@ function Post({ post, setPosts }) {
       <div className="post-actions">
         <FontAwesomeIcon
           icon={faHeart}
-          className={`heart-icon2 ${liked ? 'liked' : ''}`}
+          className={`heart-icon ${liked ? 'liked' : ''}`}
           onClick={handleLike}
         />{' '}
         ({post.likes})

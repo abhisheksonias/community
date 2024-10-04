@@ -17,10 +17,10 @@ function App() {
       });
   }, []);
 
-  const addPost = (content) => {
-    const newPost = { id: Date.now(), content, likes: 0, comments: [] };
-    setPosts([newPost, ...posts]);
-  };
+  // const addPost = (content) => {
+  //   const newPost = { id: Date.now(), content, likes: 0, comments: [] };
+  //   setPosts([newPost, ...posts]);
+  // };
 
   const postStory = (content) => {
     // Post data to backend

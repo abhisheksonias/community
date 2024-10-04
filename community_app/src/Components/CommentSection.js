@@ -65,7 +65,7 @@ function CommentSection({ comments, postId, setPosts }) {
             <div className="comment-actions">
               <FontAwesomeIcon
                 icon={faHeart}
-                className={`heart-icon2 ${comment.liked ? 'liked' : ''}`}
+                className={`heart-icon ${comment.liked ? 'liked' : ''}`}
                 onClick={() => handleCommentLike(comment._id)}
               />{' '}
               ({comment.likes})
